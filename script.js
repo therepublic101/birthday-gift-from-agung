@@ -50,6 +50,11 @@ function startAudio(stream){
 }
 
 let blowDetected=false;
+// background music to play after blow. Place your mp3 file in the project root and set name here:
+const bgMusicSrc = 'song.mp3';
+const bgMusic = new Audio(bgMusicSrc);
+bgMusic.preload = 'auto';
+bgMusic.volume = 0.9;
 function monitorAudio(){
   if(!listening) return;
   analyser.getByteTimeDomainData(dataArray);
@@ -66,13 +71,15 @@ function monitorAudio(){
 
 function extinguish(){
   flame.classList.add('out');
+  // play a synthesized blow sound
+  playBlowSound();
+  // then play background mp3 (if available)
+  playBgMusic();
   showSparkles();
   runConfetti();
   // reveal envelope then move it to center in front of cake
   setTimeout(()=>{
-    envelope.classList.remove('hidden');
-    // allow browser to register removal, then add centered class to animate
-    setTimeout(()=> envelope.classList.add('centered'), 60);
+    
   },1200);
   // swap the wish text with animation
   if(wishTextPath){
@@ -89,6 +96,62 @@ function extinguish(){
   // animate balloons and sprinkles
   balloons.forEach(b => { b.style.transition = 'all 800ms ease'; b.style.transform = 'scale(1.15) translateY(-40px)'; });
   sprinkles.forEach((s,i)=>{ s.style.transition='all 900ms cubic-bezier(.2,.9,.2,1)'; s.style.transform = `translateY(${8 + i%3 * 6}px) rotate(${(i%2?10:-8)}deg)` });
+}
+
+// Synthesize a short 'blow' sound (pop + whoosh) using Web Audio
+function playBlowSound(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    const now = audioCtx.currentTime;
+
+    // short sine pop
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(420, now);
+    osc.frequency.exponentialRampToValueAtTime(120, now + 0.18);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.38, now + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + 0.4);
+
+    // noise whoosh
+    const dur = 0.45;
+    const bufferSize = Math.floor(audioCtx.sampleRate * dur);
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<bufferSize;i++) data[i] = (Math.random()*2-1) * (1 - i/bufferSize);
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1200, now);
+    filter.Q.setValueAtTime(0.8, now);
+    const ng = audioCtx.createGain();
+    ng.gain.setValueAtTime(0.0001, now);
+    ng.gain.linearRampToValueAtTime(0.22, now + 0.02);
+    ng.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    noise.connect(filter); filter.connect(ng); ng.connect(audioCtx.destination);
+    noise.start(now); noise.stop(now + dur + 0.02);
+  }catch(e){
+    // ignore audio errors
+    console.warn('Audio error', e);
+  }
+}
+
+function playBgMusic(){
+  try{
+    // Some browsers require AudioContext to be resumed after user gesture
+    if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+    // attempt to play the mp3 file
+    bgMusic.currentTime = 0;
+    bgMusic.play().catch(err=>{
+      console.warn('bgMusic play failed', err);
+    });
+  }catch(e){
+    console.warn('playBgMusic error', e);
+  }
 }
 
 // sparkles: small DOM elements
