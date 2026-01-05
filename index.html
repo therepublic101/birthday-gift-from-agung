@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Special Gift!</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="welcome" class="overlay">
+    <div class="welcome-card">
+      <h1 class="glow">Haii Syahda Yuniar!</h1>
+      <p>Apakah kamu ingin memberikan sesuatu ke kamu?</p>
+      <button id="readyBtn">Ready</button>
+    </div>
+  </div>
+
+  <main class="stage">
+    <section id="scene" class="hidden">
+      <div class="cake">
+        <div class="plate"></div>
+
+        <!-- curved wish text (SVG) -->
+        <svg id="wishSvg" class="wish-svg" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <path id="arcPath" d="M20,90 A180,80 0 0,1 380,90" fill="none" />
+          </defs>
+          <text class="arc-text">
+            <textPath id="wishTextPath" href="#arcPath" startOffset="50%" text-anchor="middle">Make a wish</textPath>
+          </text>
+        </svg>
+
+        <div class="body">
+          <div class="icing"></div>
+          <div class="sprinkles">
+            <span class="sprinkle" style="left:16%;top:28%;background:#fff"></span>
+            <span class="sprinkle" style="left:28%;top:36%;background:#ffd54d"></span>
+            <span class="sprinkle" style="left:45%;top:20%;background:#ff6b6b"></span>
+            <span class="sprinkle" style="left:60%;top:34%;background:#8ac926"></span>
+            <span class="sprinkle" style="left:72%;top:28%;background:#1982c4"></span>
+            <span class="sprinkle" style="left:50%;top:46%;background:#6a4c93"></span>
+          </div>
+          <div class="mini-candles">
+            <div class="mini-candle"></div>
+            <div class="mini-candle" style="left:70%;"></div>
+          </div>
+        </div>
+
+        <div class="candle main-candle">
+          <div class="flame" id="flame"></div>
+          <div class="wick"></div>
+        </div>
+
+        <div class="balloons" aria-hidden="true">
+          <div class="balloon" style="left:10%;background:#ff7eb6"></div>
+          <div class="balloon" style="left:78%;background:#7be0ff"></div>
+        </div>
+      </div>
+
+      <canvas id="confetti"></canvas>
+
+      <div id="sparkles" class="hidden"></div>
+
+      <div id="envelope" class="envelope hidden" title="Klik untuk membuka surat"></div>
+
+      <div id="letter" class="letter hidden">
+        <div class="close" id="closeLetter">✖</div>
+        <h2>Surat Spesial</h2>
+        <p>Haiii Syahda,</p>
+        <p>Di hari istimewamu ini, kuharap setiap potong kue manis membawa senyum dan kebahagiaan. Semoga tahun baru usiamu dipenuhi peluang baru, tawa yang tulus, dan petualangan yang menghangatkan hati.</p>
+        <p>Ingatlah selalu betapa berharganya kamu — oleh keluargamu, oleh teman-temanmu, dan oleh banyak hati yang peduli. Semoga segala impianmu mendapatkan jalan, dan setiap hari baru membawa alasan untuk bersyukur.</p>
+        <p>Selamat ulang tahun! Tiup lilinnya, buat satu permintaan, dan biarkan semua hal baik datang padamu.</p>
+        <p>Peluk hangat,</p>
+        <p><strong>— Agung</strong></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
