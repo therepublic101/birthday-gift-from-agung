@@ -12,7 +12,10 @@ const balloons = document.querySelectorAll('.balloon');
 const sprinkles = document.querySelectorAll('.sprinkle');
 
 // set the recipient name here (edit as desired)
-const birthdayName = 'Nama';
+const birthdayName = 'Syahda Yuniar';
+
+// control flow: do not allow blowing until envelope is opened and letter read
+let allowBlow = false;
 
 let audioCtx, analyser, dataArray, source, listening=false;
 
@@ -22,10 +25,15 @@ readyBtn.addEventListener('click', async ()=>{
     startAudio(stream);
     welcome.classList.add('hidden');
     scene.classList.remove('hidden');
+    // show envelope centered before blow
+    envelope.classList.remove('hidden');
+    setTimeout(()=> envelope.classList.add('centered'), 60);
   }catch(e){
     alert('Izin mic ditolak atau tidak tersedia. Tetap lanjut?');
     welcome.classList.add('hidden');
     scene.classList.remove('hidden');
+    envelope.classList.remove('hidden');
+    setTimeout(()=> envelope.classList.add('centered'), 60);
   }
 });
 
@@ -49,7 +57,7 @@ function monitorAudio(){
   for(let i=0;i<dataArray.length;i++){ let v=(dataArray[i]-128)/128; sum+=v*v }
   let rms=Math.sqrt(sum/dataArray.length);
   // simple heuristic: blow produces a louder RMS spike
-  if(rms>0.12 && !blowDetected){
+  if(rms>0.12 && !blowDetected && allowBlow){
     blowDetected=true;
     extinguish();
   }
@@ -125,17 +133,28 @@ function runConfetti(){
 
 // Envelope open -> show letter
 envelope.addEventListener('click', ()=>{
-  envelope.classList.add('hidden');
-  // reveal letter modal and animate entrance
-  letter.classList.remove('hidden');
-  // ensure entrance animation plays
-  setTimeout(()=> letter.classList.add('show'), 20);
+  // play opening animation then show letter; keep envelope visible during animation
+  envelope.classList.add('opening');
+  setTimeout(()=>{
+    envelope.classList.add('hidden');
+    // reveal letter modal and animate entrance
+    letter.classList.remove('hidden');
+    setTimeout(()=> letter.classList.add('show'), 20);
+  }, 600);
 });
 closeLetter.addEventListener('click', ()=>{
   // animate hide
   letter.classList.remove('show');
-  // after transition, hide completely
-  setTimeout(()=> letter.classList.add('hidden'), 360);
+  // after transition, hide completely and enable blow
+  setTimeout(()=>{
+    letter.classList.add('hidden');
+    // fully hide envelope if still visible
+    envelope.classList.add('hidden');
+    envelope.classList.remove('opening');
+    envelope.classList.remove('centered');
+    // now allow blowing the candle
+    allowBlow = true;
+  }, 360);
 });
 
 // Resize confetti canvas on window resize

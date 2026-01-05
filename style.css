@@ -59,6 +59,12 @@ html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial;backgr
 .envelope{width:120px;height:80px;background:#fff;border-radius:6px;position:absolute;right:20%;bottom:18%;box-shadow:0 6px 20px rgba(0,0,0,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:40;transition:all 700ms cubic-bezier(.2,.9,.2,1)}
 .envelope::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(135deg,#eee,#ddd);clip-path:polygon(0 0,50% 65%,100% 0)}
 .envelope.centered{left:50%;right:auto;bottom:48%;transform:translateX(-50%) scale(2);z-index:600}
+.envelope.opening{animation:envelopeOpen 600ms cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes envelopeOpen{
+  0%{transform:translateX(0) scale(1);opacity:1}
+  60%{transform:translateY(-18px) rotateX(18deg) scale(1.05);opacity:1}
+  100%{transform:translateY(-26px) rotateX(38deg) scale(1.08);opacity:0}
+}
 .letter{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:320px;background:linear-gradient(180deg,#fff,#fffaf0);padding:20px;border-radius:10px;box-shadow:0 20px 60px rgba(2,6,23,0.6);color:#111;z-index:1000}
 .letter .close{position:absolute;right:12px;top:8px;cursor:pointer}
 
