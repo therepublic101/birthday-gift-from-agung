@@ -23,6 +23,17 @@ readyBtn.addEventListener('click', async ()=>{
   try{
     const stream = await navigator.mediaDevices.getUserMedia({audio:true});
     startAudio(stream);
+    // Request fullscreen on user gesture (Ready click). Browsers require gesture.
+    try{
+      const docEl = document.documentElement;
+      if(docEl.requestFullscreen) await docEl.requestFullscreen();
+      else if(docEl.webkitRequestFullscreen) await docEl.webkitRequestFullscreen();
+      else if(docEl.mozRequestFullScreen) await docEl.mozRequestFullScreen();
+      else if(docEl.msRequestFullscreen) await docEl.msRequestFullscreen();
+    }catch(fsErr){
+      // if fullscreen fails, ignore — user can press F11 manually
+      console.warn('Fullscreen request failed or was blocked', fsErr);
+    }
     welcome.classList.add('hidden');
     scene.classList.remove('hidden');
     // show envelope centered before blow
